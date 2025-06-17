@@ -1,0 +1,21 @@
+services:
+  client:
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    container_name: client
+    volumes:
+      - ./client:/client
+      - /client/node_modules
+    ports:
+      - 8080:3000
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: ./api
+    container_name: api
+    volumes:
+      - ./api:/api
+      - /api/node_modules
+    ports:
+      - 8081:3001

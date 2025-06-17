@@ -38,7 +38,7 @@ Passport.use(new GoogleStrategy({
 }, verifyLogin));
 
 Passport.serializeUser(function (user, cb) {
-    cb(null, { id: user.uuid, username: user.username, displayName: user.displayName });
+    cb(null, { id: user.uuid, username: user.username, displayName: user.displayName, isAdmin: true });
 });
 
 Passport.deserializeUser(function (user, cb) {
@@ -51,15 +51,15 @@ var router = express.Router();
 router.get('/login', Passport.authenticate('google'));
 
 router.get('/oauth2/redirect/google', Passport.authenticate('google', {
-    successReturnToOrRedirect: '/',
-    failureRedirect: '/'
+    successReturnToOrRedirect: `${process.env.CLIENT_URL}:${process.env.CLIENT_PORT}/`,
+    failureRedirect: `${process.env.CLIENT_URL}:${process.env.CLIENT_PORT}/`
 }));
 
 router.post('/logout', function (req, res, next) {
     console.log("Logging Out")
     req.logout(function (err) {
         if (err) { return next(err); }
-        res.redirect('/');
+        res.redirect(`${process.env.CLIENT_URL}:${process.env.CLIENT_PORT}/`);
         console.log("Redirecting")
     });
 });

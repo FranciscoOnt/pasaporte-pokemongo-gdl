@@ -2,16 +2,22 @@ import express from 'express'
 import sqlite from 'better-sqlite3'
 import session from 'express-session'
 import SQLiteStore from 'better-sqlite3-session-store'
-import { authRouter } from './src/api/auth.js'
-import ViteExpress from "vite-express";
+import { authRouter } from './auth.js'
 import Passport from 'passport'
+import cors from 'cors';
 
 const _SQLiteStore = SQLiteStore(session);
 
-const db = new sqlite("sessions.db");
+const db = new sqlite("./db/sessions.db");
 
 const app = express();
 
+const corsConfig = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+};
+
+app.use(cors(corsConfig))
 app.use(
     session({
         name: 'pokemongo_gdl',
@@ -32,7 +38,7 @@ app.use(Passport.authenticate('session'));
 
 app.use('/', authRouter);
 
-const port = 3000
+const port = process.env.API_PORT ?? ""
 
 app.get('/session', (req, res) => {
     console.log(req.session.passport.user)
@@ -46,4 +52,4 @@ app.get('/profile', (req, res) => {
     res.send({})
 })
 
-ViteExpress.listen(app, port, () => console.log("Server is listening..."));
+app.listen(port, () => console.log(`Server is listening at port ${port}...`));

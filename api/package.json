@@ -1,0 +1,21 @@
+{
+  "name": "pasaporte-pokemongo-gdl-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env ./src/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "better-sqlite3-session-store": "^0.1.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "haversine": "^1.1.1",
+    "nodemon": "^3.1.10",
+    "passport": "^0.7.0",
+    "passport-google-oidc": "^0.1.0",
+    "uuid": "^11.1.0"
+  }
+}

@@ -1,6 +1,6 @@
 import sqlite from 'better-sqlite3'
 
-export const db = new sqlite('pogo_gdl.db', {verbose: console.log })
+export const db = new sqlite('./db/pogo_gdl.db', { verbose: console.log })
 
 db.pragma('journal_mode = WAL');
 db.prepare("CREATE TABLE IF NOT EXISTS users ( \
