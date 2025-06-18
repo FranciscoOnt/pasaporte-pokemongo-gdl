@@ -1,51 +1,38 @@
-import { NavLink, Outlet, useLoaderData } from "react-router";
-import { useTheme } from "@heroui/use-theme";
+import { Outlet, useLoaderData } from "react-router";
 
 import {
     Navbar,
-    NavbarBrand,
     NavbarContent,
-    NavbarItem,
-    Button,
-    Avatar,
 } from "@heroui/react";
+import { useState } from "react";
+import PageLogo from "../components/layout/page-logo";
+import ThemeSwitcher from "../components/layout/theme-switcher";
+import UserProfile from "../components/layout/user-profile";
+import Footer from "../components/layout/footer";
 
 function Layout() {
-    const { theme, setTheme } = useTheme()
     const { profile } = useLoaderData();
+    const [userProfile, setUserProfile] = useState(profile);
+    const isLoggedIn = (profile && profile.id)
 
     return (
-        <div className='w-full min-h-screen'>
-            <Navbar className='flex-none' isBordered isBlurred={false} maxWidth="xl">
-                <NavbarBrand>
-                    <NavLink to="/">
-                        <h1 className="font-bold text-inherit">LOGO</h1>
-                    </NavLink>
-                </NavbarBrand>
+        <div className='flex flex-col justify-between w-full min-h-screen'>
+            <Navbar
+                className='flex-none bg-blue-950 text-primary-foreground'
+                isBordered
+                isBlurred={false}
+                maxWidth="xl"
+            >
+                <PageLogo />
                 <NavbarContent justify="end">
-                    <NavbarItem justify="end">
-                        <Button onPress={() => setTheme(theme === 'light' ? 'dark' : 'light')} isIconOnly >
-                            {theme}
-                        </Button>
-                    </NavbarItem>
-                    {profile.isAdmin && <NavbarItem >
-                        <NavLink to="/admin">
-                            <Button
-                                color="primary"
-                                variant="bordered"
-                            >
-                                Administrar
-                            </Button>
-                        </NavLink>
-                    </NavbarItem>}
-                    <NavbarItem justify="end">
-                        {profile.id && <Avatar isBordered showFallback name={profile.displayName} />}
-                    </NavbarItem>
+                    <ThemeSwitcher />
+                    {isLoggedIn && <UserProfile profile={userProfile} />}
                 </NavbarContent>
             </Navbar>
-            <div className='flex flex-col m-auto justify-center w-full md:max-w-7xl'>
-                <Outlet />
+            <div className='mx-auto mb-auto w-full md:max-w-7xl p-2 md:p-4'>
+                <Outlet context={{ profile: userProfile }} />
             </div>
+            <Footer />
         </div>
     )
 }

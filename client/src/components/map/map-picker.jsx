@@ -7,7 +7,7 @@ function MapPicker({
     defaultLat = +import.meta.env.VITE_MAPS_DEFAULT_LAT,
     defaultLng = +import.meta.env.VITE_MAPS_DEFAULT_LNG,
     defaultRadius = 300,
-} = props) {
+}) {
     const [position, setPosition] = useState({ lat: defaultLat, lng: defaultLng })
     const [radius, setRadius] = useState(defaultRadius)
 

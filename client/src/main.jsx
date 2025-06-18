@@ -5,6 +5,7 @@ import { HeroUIProvider } from '@heroui/react'
 import {
   createBrowserRouter,
   RouterProvider,
+  useHref,
 } from "react-router";
 import HomePage from './pages/home'
 import { getUserProfile } from './lib/api';
@@ -21,16 +22,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
-        loader: async () => {
-          return { profile: await getUserProfile() };
-        },
       },
       {
         path: "/admin",
         element: <AdminLanding />,
-        loader: async () => {
-          return { profile: await getUserProfile() };
-        },
       }
     ]
   },
@@ -38,7 +33,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <HeroUIProvider>
+    <HeroUIProvider navigate={router.navigate} useHref={useHref}>
       <main className="text-foreground bg-background">
         <RouterProvider router={router} />
       </main>

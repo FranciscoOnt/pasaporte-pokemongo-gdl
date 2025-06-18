@@ -1,35 +1,20 @@
-import { useEffect, useState } from 'react'
-import { useLoaderData } from "react-router";
-import { API_URL } from '../lib/constants';
+import { useOutletContext } from "react-router";
 
-import { Button, Card, CardBody, CardHeader, Form } from "@heroui/react";
-import MapPicker from '../components/map/mapPicker';
+import { Card } from "@heroui/react";
+
+import UserLanding from "../components/homepage/user-landing";
+import GuestLanding from "../components/homepage/guest-landing";
 
 function HomePage() {
-    const { profile } = useLoaderData();
+    const { profile } = useOutletContext();
+    const isLoggedIn = (profile && profile.id)
 
     return (
-        <>
-            <Card className=''>
-                <CardHeader>
-                    <h1 className='text-xl'>Homepage</h1>
-                </CardHeader>
-                <CardBody>
-                    {!profile?.id && <a href={`${API_URL}/login`}>
-                        <Button color="primary">Sign in with Google</Button>
-                    </a>}
-                    {profile?.id &&
-                        <Form action={`${API_URL}/logout`} method='post'>
-                            <Button color="secondary" type='submit'>Logout</Button>
-                        </Form>
-                    }
-
-                    {profile?.id && <p>Name: {profile.username}, Nick{profile.displayName}, UUID: {profile.id}</p>}
-
-                    <MapPicker />
-                </CardBody>
-            </Card>
-        </>
+        <Card className=''>
+            {isLoggedIn ?
+                <UserLanding profile={profile} /> :
+                <GuestLanding />}
+        </Card>
     )
 }
 
