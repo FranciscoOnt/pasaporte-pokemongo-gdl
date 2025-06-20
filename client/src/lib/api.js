@@ -10,3 +10,8 @@ const api = axios.create({
 export async function getUserProfile() {
     return (await api.get('/profile')).data
 }
+
+export async function updateUserProfile(data) {
+    console.log(data)
+    return (await api.post('/profile/update', data))
+}

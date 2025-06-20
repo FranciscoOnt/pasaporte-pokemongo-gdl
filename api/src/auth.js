@@ -7,15 +7,13 @@ import { getAccount, registerAccount, getUserById, getUserByUUID, registerUser }
 const verifyLogin = (issuer, profile, callback) => {
     const account = getAccount(issuer, profile.id);
 
-    // Generate an account if user does not have one
     if (!account) {
-        const signupResult = registerUser(profile.displayName, uuidV4())
+        const signupResult = registerUser(uuidV4())
         if (signupResult.changes === 0) {
             return callback(new Error("Could not generate user."))
         }
 
-        const insertedRowId = signupResult.lastInsertRowid
-        const registeredUser = getUserById(insertedRowId)
+        const registeredUser = getUserById(signupResult.lastInsertRowid)
         const registeredAccount = registerAccount(registeredUser.uuid, issuer, profile.id)
 
         if (registeredAccount.changes === 0) {
@@ -38,7 +36,13 @@ Passport.use(new GoogleStrategy({
 }, verifyLogin));
 
 Passport.serializeUser(function (user, cb) {
-    cb(null, { id: user.uuid, username: user.username, displayName: user.displayName, isAdmin: true });
+    cb(null, { 
+        id: user.uuid,
+        displayName: user.displayName,
+        profileColor: user.profileColor ?? 0,
+        nameUpdateDate: user.nameUpdateDate,
+        isAdmin: true 
+    });
 });
 
 Passport.deserializeUser(function (user, cb) {
@@ -56,11 +60,9 @@ router.get('/oauth2/redirect/google', Passport.authenticate('google', {
 }));
 
 router.post('/logout', function (req, res, next) {
-    console.log("Logging Out")
     req.logout(function (err) {
         if (err) { return next(err); }
         res.redirect(`${process.env.CLIENT_URL}:${process.env.CLIENT_PORT}/`);
-        console.log("Redirecting")
     });
 });
 

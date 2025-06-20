@@ -3,6 +3,7 @@ import sqlite from 'better-sqlite3'
 import session from 'express-session'
 import SQLiteStore from 'better-sqlite3-session-store'
 import { authRouter } from './auth.js'
+import { profileRouter } from './profile.js'
 import Passport from 'passport'
 import cors from 'cors';
 
@@ -13,10 +14,11 @@ const db = new sqlite("./db/sessions.db");
 const app = express();
 
 const corsConfig = {
-  origin: 'http://localhost:3000',
-  credentials: true,
+    origin: /http:\/\/localhost:\d+/,
+    credentials: true,
 };
 
+app.use(express.json())
 app.use(cors(corsConfig))
 app.use(
     session({
@@ -37,19 +39,13 @@ app.use(Passport.initialize());
 app.use(Passport.authenticate('session'));
 
 app.use('/', authRouter);
+app.use('/', profileRouter);
 
 const port = process.env.API_PORT ?? ""
 
 app.get('/session', (req, res) => {
     console.log(req.session.passport.user)
     res.send(`Request => ${JSON.stringify(req.session.passport.user)}`)
-})
-
-app.get('/profile', (req, res) => {
-    if (req.isAuthenticated()) {
-        return res.send(req.session.passport.user)
-    }
-    res.send({})
 })
 
 app.listen(port, () => console.log(`Server is listening at port ${port}...`));

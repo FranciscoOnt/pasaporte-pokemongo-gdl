@@ -5,9 +5,11 @@ export const db = new sqlite('./db/pogo_gdl.db', { verbose: console.log })
 db.pragma('journal_mode = WAL');
 db.prepare("CREATE TABLE IF NOT EXISTS users ( \
     id INTEGER PRIMARY KEY, \
-    username TEXT, \
     uuid TEXT UNIQUE, \
-    displayName TEXT \
+    displayName TEXT, \
+    profileColor INTEGER, \
+    nameUpdateDate INTEGER DEFAULT 0, \
+    suspended INTEGER DEFAULT 0 \
   )").run()
 
 db.prepare("CREATE TABLE IF NOT EXISTS federated_credentials ( \
@@ -33,12 +35,17 @@ export const getUserByUUID = (uuid) => {
     return query.get(uuid)
 }
 
-export const registerUser = (userName, uuid) => {
-    const query = db.prepare('INSERT INTO users (username, uuid) VALUES (?, ?)')
-    return query.run(userName, uuid)
+export const registerUser = (uuid) => {
+    const query = db.prepare('INSERT INTO users (uuid) VALUES (?)')
+    return query.run(uuid)
 }
 
 export const registerAccount = (user_id, provider, subject) => {
     const query = db.prepare('INSERT INTO federated_credentials (user_id, provider, subject) VALUES (?, ?, ?)')
     return query.run(user_id, provider, subject)
+}
+
+export const updateUserProfile = (uuid, displayName, color, updateDate = 0) => {
+    const query = db.prepare('UPDATE users SET displayName = ?, profileColor = ?, nameUpdateDate = ? WHERE uuid = ?')
+    return query.run(displayName, color, updateDate, uuid)
 }

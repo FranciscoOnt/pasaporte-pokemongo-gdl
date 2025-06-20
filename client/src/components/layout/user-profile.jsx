@@ -8,10 +8,10 @@ import {
     Form,
     NavbarItem
 } from "@heroui/react";
-import { API_URL } from '../../lib/constants';
+import { API_URL, AVATAR_COLORS } from '../../lib/constants';
 import { TbEdit, TbLogout, TbUserEdit } from "react-icons/tb";
 
-function UserProfile({ profile }) {
+function UserProfile({ profile, editProfile }) {
     const avatarRef = useRef()
     const logoutRef = useRef()
 
@@ -20,7 +20,7 @@ function UserProfile({ profile }) {
             <NavbarItem justify="end" className="flex flex-row items-center gap-2">
                 <div className="hidden sm:flex flex-col cursor-pointer" onClick={() => avatarRef?.current?.click()}>
                     <h1 className="text-sm">
-                        Accediste como:
+                        Bienvenido!
                     </h1>
                     <h2 className="font-bold text-xs">
                         {profile.displayName ?? 'Usuario de Google'}
@@ -31,6 +31,9 @@ function UserProfile({ profile }) {
                         <Avatar
                             as='button'
                             className='cursor-pointer'
+                            classNames={{
+                                base: AVATAR_COLORS[profile.profileColor]
+                            }}
                             color={profile.displayName ? "primary" : "default"}
                             isBordered
                             name={profile.displayName}
@@ -50,12 +53,12 @@ function UserProfile({ profile }) {
                             Administrar
                         </DropdownItem>
                         <DropdownItem
-                            textValue="Cambiar Nombre"
+                            onPress={() => editProfile()}
+                            textValue="Editar Perfil"
                             key="name change"
-                            hidden={profile.displayName}
                             endContent={<TbUserEdit size={24} />}
                         >
-                            Cambiar Nombre
+                            Editar Perfil
                         </DropdownItem>
                         <DropdownItem
                             onPress={() => logoutRef?.current.click()}
