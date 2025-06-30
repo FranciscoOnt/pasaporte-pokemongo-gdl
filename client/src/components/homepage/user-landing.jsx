@@ -4,13 +4,13 @@ import { TbRubberStamp } from "react-icons/tb";
 import EventsTab from "../user/events-tab";
 import CollectionTab from "../user/collection";
 
-function UserLanding() {
+function UserLanding({ profile }) {
     return (
         <>
             <CardBody>
                 <Tabs fullWidth color="default" variant="solid" size='lg' radius="full">
                     <Tab
-                        key="events"
+                        key="eventos"
                         title={
                             <div className="flex items-center space-x-2">
                                 <CgCalendar />
@@ -21,7 +21,7 @@ function UserLanding() {
                         <EventsTab />
                     </Tab>
                     <Tab
-                        key="collection"
+                        key="sellos"
                         title={
                             <div className="flex items-center space-x-2">
                                 <TbRubberStamp />
@@ -29,7 +29,7 @@ function UserLanding() {
                             </div>
                         }
                     >
-                        <CollectionTab />
+                        <CollectionTab profile={profile} />
                     </Tab>
                 </Tabs>
             </CardBody>

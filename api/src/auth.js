@@ -2,7 +2,8 @@ import express from 'express'
 import Passport from 'passport'
 import GoogleStrategy from 'passport-google-oidc';
 import { v4 as uuidV4 } from 'uuid'
-import { getAccount, registerAccount, getUserById, getUserByUUID, registerUser } from './db.js'
+import { getAccount, registerAccount } from './db/db.js'
+import { getUserById, getUserByUUID, registerUser, updateUserLogin } from './db/user-db.js'
 
 const verifyLogin = (issuer, profile, callback) => {
     const account = getAccount(issuer, profile.id);
@@ -24,6 +25,8 @@ const verifyLogin = (issuer, profile, callback) => {
     }
 
     const loggedUser = getUserByUUID(account.user_id)
+
+    updateUserLogin(loggedUser.uuid)
 
     return callback(null, loggedUser)
 };

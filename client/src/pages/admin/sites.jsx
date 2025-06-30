@@ -1,22 +1,20 @@
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import AdminActions from "../components/admin/actions";
 import { IoMdHome } from "react-icons/io";
+import AdminHeader from "../../components/admin/admin-header";
 
-function AdminLanding() {
+function AdminSites() {
     return (
         <>
             <Card className='p-2'>
-                <CardHeader className="flex flex-row gap-1">
-                    <IoMdHome size={24} className="fill-foreground-500" />
-                    <h1 className='text-xl'>Administración</h1>
-                </CardHeader>
+                <AdminHeader current={'Lugares'} />
                 <Divider />
                 <CardBody>
-                    <AdminActions />
+                    Sites Content
                 </CardBody>
             </Card>
         </>
     )
 }
 
-export default AdminLanding
+export default AdminSites

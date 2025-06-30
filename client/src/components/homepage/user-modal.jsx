@@ -9,25 +9,37 @@ import {
     ModalBody,
     ModalFooter,
     Button,
+    ButtonGroup,
+    Image,
     Input,
 } from "@heroui/react";
 import { useState } from "react";
-import { AVATAR_COLORS } from "../../lib/constants";
+import { AVATAR_COLORS, TEAMS, TEAM_NAMES, TEAM_BTN_COLOR } from "../../lib/constants";
 import { updateUserProfile } from "../../lib/api"
 import { addToast } from "@heroui/toast";
+import { TbPokeball } from "react-icons/tb";
+
 
 function UserModal({ isOpen, onOpenChange, profile }) {
     const [newName, setNewName] = useState(profile.displayName ?? "")
+    const [team, setTeam] = useState(profile.team ?? "none")
     const [selectedColor, setSelectedColor] = useState(profile.profileColor)
     const [isWelcome, setIsWelcome] = useState(!profile.displayName);
     const revalidator = useRevalidator();
+
+    const resetForm = () => {
+        setNewName(profile.displayName)
+        setSelectedColor(profile.profileColor)
+        setTeam(profile.team)
+    }
 
     const onSubmit = async (e) => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(e.currentTarget));
 
         if (profile.displayName == data.displayName &&
-            profile.profileColor == data.profileColor) {
+            profile.profileColor == data.profileColor &&
+            profile.team == data.team) {
             onOpenChange()
             return;
         }
@@ -44,9 +56,11 @@ function UserModal({ isOpen, onOpenChange, profile }) {
                     description: error.message
                 }))
             }
-            revalidator.revalidate()
-            onOpenChange()
+
+            await revalidator.revalidate()
         }
+        setIsWelcome(false)
+        onOpenChange()
     };
 
     return (
@@ -60,23 +74,47 @@ function UserModal({ isOpen, onOpenChange, profile }) {
                                 <Divider />
                                 <ModalBody>
                                     {isWelcome &&
-                                        <div className="mb-4">
-                                            <p>Antes de comenzar, ingresa tu nombre de entrenador de Pokémon GO para poder participar en las dinámicas de la comunidad.</p>
+                                        <div className="mb-2 text-sm">
+                                            <p>Antes de comenzar, ingresa tu nombre de entrenador y equipo de Pokémon GO para poder participar en las dinámicas de la comunidad.</p>
                                         </div>
                                     }
                                     <Input
                                         name="displayName"
-                                        size="lg"
+                                        size="md"
                                         minLength={3}
                                         maxLength={15}
                                         isRequired
                                         pattern="[a-zA-Z0-9]{3,15}"
                                         label="Nombre de Entrenador"
-                                        description="Asegurate de que coincide con tu nombre en Pokémon GO."
-                                        errorMessage="Pof favor ingresa un nombre de entrenador válido."
+                                        description="Tu nombre de entrenador en Pokémon GO."
+                                        errorMessage="Por favor ingresa un nombre de entrenador válido."
                                         onValueChange={setNewName}
                                         value={newName}
                                     />
+                                    <p ><span className="font-semibold">Mi Equipo: </span>{TEAM_NAMES[team]}</p>
+                                    <ButtonGroup>
+                                        {TEAMS.map(_team => {
+                                            const TeamImage = () => (_team === 'none' ?
+                                                <TbPokeball size={24} />
+                                                :
+                                                <Image className="size-8" src={`/${_team}.webp`} />
+                                            )
+
+                                            return <Button
+                                                key={_team}
+                                                className='flex flex-col h-14 gap-0.5'
+                                                variant={team == _team ? 'bordered' : 'flat'}
+                                                color={TEAM_BTN_COLOR[_team]}
+                                                onPress={() => setTeam(_team)}
+                                            >
+                                                <TeamImage />
+                                                {TEAM_NAMES[_team]}
+                                            </Button>
+                                        }
+                                        )}
+                                    </ButtonGroup>
+                                    <input readOnly name="team" hidden value={team} />
+                                    <p className="text-tiny text-neutral-500">La informacion proporcionada podria requerir ser verificada al momento de participar en las dinamicas de la comunidad en persona.</p>
                                     <Divider />
                                     <div className="mb-4">
                                         <p>Elege un color para tu perfil.</p>
@@ -103,7 +141,7 @@ function UserModal({ isOpen, onOpenChange, profile }) {
                                 <Divider />
                                 <ModalFooter className="flex flex-col">
                                     {isWelcome &&
-                                        <p className="text-sm">Si lo deseas puedes actualizar tu perfil en cualquier momento pulsando en el avatar de la parte superior derecha de la página.</p>
+                                        <p className="text-tiny">Si lo deseas puedes actualizar tu perfil en cualquier momento pulsando en el avatar de la parte superior derecha de la página.</p>
                                     }
                                     <Button color="primary" type="submit">
                                         Confirmar
@@ -115,8 +153,7 @@ function UserModal({ isOpen, onOpenChange, profile }) {
                                             if (isWelcome) {
                                                 setIsWelcome(false)
                                             }
-                                            setNewName(profile.displayName)
-                                            setSelectedColor(profile.profileColor)
+                                            resetForm()
                                             onClose()
                                         }}
                                     >
@@ -126,7 +163,7 @@ function UserModal({ isOpen, onOpenChange, profile }) {
                             </>
                         )}
                     </ModalContent>
-                </Form>
+                </Form >
             </Modal >
         </>
     );

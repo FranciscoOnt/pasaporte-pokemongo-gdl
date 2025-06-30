@@ -15,3 +15,6 @@ export const AVATAR_COLORS = [
     'bg-black',
 ]
 
+export const TEAMS = ['mystic', 'valor', 'instinct', 'none']
+export const TEAM_NAMES = { mystic: 'Místico', valor: 'Valor', instinct: 'Instinto', none: 'Ninguno' }
+export const TEAM_BTN_COLOR = { mystic: 'primary', valor: 'danger', instinct: 'warning', none: 'default' }

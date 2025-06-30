@@ -1,5 +1,5 @@
 import express from 'express'
-import { getUserByUUID, updateUserProfile } from './db.js'
+import { getUserByUUID, updateUserProfile } from './db/user-db.js'
 import { addDays, getTime, isBefore } from "date-fns";
 
 var router = express.Router();
@@ -18,10 +18,11 @@ router.post('/profile/update', (req, res) => {
         const errors = []
         const uuid = req.session.passport.user.id;
         const user = getUserByUUID(uuid);
-        let { displayName, profileColor } = req.body
+        let { displayName, profileColor, team } = req.body
         let nameChangeDate = new Date(user.nameUpdateDate)
+        let teamChangeDate = new Date(user.teamUpdateDate)
 
-        if (displayName === user.displayName && profileColor === user.profileColor) {
+        if (displayName === user.displayName && profileColor === user.profileColor && team === user.team) {
             return res.status(200).send()
         }
 
@@ -34,7 +35,16 @@ router.post('/profile/update', (req, res) => {
             }
         }
 
-        updateUserProfile(uuid, displayName, profileColor, getTime(nameChangeDate))
+        if (team !== user.team) {
+            if (isBefore(Date.now(), addDays(teamChangeDate, 30))) {
+                errors.push({ message: "El equipo fue actualizado recientemente, es necesario esperar al menos 30 dias despues de la fecha del ultimo cambio" })
+                team = user.team;
+            } else {
+                teamChangeDate = Date.now();
+            }
+        }
+
+        updateUserProfile(uuid, displayName, profileColor, team, getTime(nameChangeDate), getTime(teamChangeDate))
 
         return res.status(200).send(errors)
     }

@@ -4,6 +4,7 @@ import session from 'express-session'
 import SQLiteStore from 'better-sqlite3-session-store'
 import { authRouter } from './auth.js'
 import { profileRouter } from './profile.js'
+import { userAdminRouter } from './admin/users.js'
 import Passport from 'passport'
 import cors from 'cors';
 
@@ -40,6 +41,7 @@ app.use(Passport.authenticate('session'));
 
 app.use('/', authRouter);
 app.use('/', profileRouter);
+app.use('/', userAdminRouter);
 
 const port = process.env.API_PORT ?? ""
 
