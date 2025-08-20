@@ -6,16 +6,14 @@ import UserLanding from "../components/homepage/user-landing";
 import GuestLanding from "../components/homepage/guest-landing";
 
 function HomePage() {
-    const { profile } = useOutletContext();
-    const isLoggedIn = (profile && profile.id)
+  const { profile } = useOutletContext();
+  const isLoggedIn = profile && profile.id;
 
-    return (
-        <Card className=''>
-            {isLoggedIn ?
-                <UserLanding profile={profile} /> :
-                <GuestLanding />}
-        </Card>
-    )
+  return (
+    <Card className="">
+      {isLoggedIn ? <UserLanding profile={profile} /> : <GuestLanding />}
+    </Card>
+  );
 }
 
-export default HomePage
+export default HomePage;
